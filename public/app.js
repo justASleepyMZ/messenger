@@ -307,6 +307,9 @@ document.getElementById("sendMessageBtn")?.addEventListener("click", () => {
 
 // Обработка входящих сообщений от других пользователей
 socket.on('chatMessage', (data) => {
+  if (data.sender == username) {
+    return;
+  }
   displayMessage(data);
 });
 
