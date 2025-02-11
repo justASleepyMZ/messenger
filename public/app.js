@@ -3,7 +3,7 @@ document.getElementById("sendCodeBtn")?.addEventListener("click", async () => {
   if (!email) return alert("Enter a valid email!");
 
   try {
-    const response = await fetch("http://localhost:5000/send-verification-code", {
+    const response = await fetch("https://messenger-kkc5.onrender.com/send-verification-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -26,7 +26,7 @@ document.getElementById("verificationCode")?.addEventListener("input", async () 
   if (code.length !== 6) return; // Проверяем только 6-значный код
 
   try {
-    const response = await fetch("http://localhost:5000/verify-code", {
+    const response = await fetch("https://messenger-kkc5.onrender.com/verify-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code }),
@@ -50,7 +50,7 @@ document.getElementById("registerBtn")?.addEventListener("click", async () => {
   const email = document.getElementById("regEmail").value;
 
   try {
-    const response = await fetch("http://localhost:5000/register", {
+    const response = await fetch("https://messenger-kkc5.onrender.com/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, username, password }),
@@ -73,7 +73,7 @@ document.getElementById("loginBtn")?.addEventListener("click", () => {
   const username = document.getElementById("loginUsername").value;
   const password = document.getElementById("loginPassword").value;
 
-  fetch("http://localhost:5000/login", {
+  fetch("https://messenger-kkc5.onrender.com/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),

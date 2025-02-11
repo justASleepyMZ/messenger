@@ -26,7 +26,7 @@ const io = socketIo(server);
 app.use(express.json());
 app.use(express.static('public'));
 app.use(cors({
-  origin: "http://localhost:5000",
+  origin: "*",
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
