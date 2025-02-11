@@ -182,7 +182,7 @@ const protect = (req, res, next) => {
 
 // Роут для получения сообщений
 app.get('/messages', protect, async (req, res) => {
-  const messages = await Message.find().sort({ timestamp: 1 }).limit(20); // Ограничиваем вывод последних 20 сообщений
+  const messages = await Message.find().sort({ timestamp: -1 }).limit(20); // Ограничиваем вывод последних 20 сообщений
   res.json(messages);
 });
 
