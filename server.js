@@ -148,29 +148,6 @@ app.post('/api/users/change-password', authMiddleware, async (req, res) => {
 });
 
 // Роут удаление аккаунта
-app.post('/api/users/change-password', authMiddleware, async (req, res) => {
-  try {
-    const { oldPassword, newPassword } = req.body;
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      return res.status(404).json({ error: "Пользователь не найден" });
-    }
-
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: "Неверный старый пароль" });
-    }
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    await user.save();
-
-    res.json({ message: "Пароль успешно изменён" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Ошибка сервера" });
-  }
-});
 
 app.delete('/api/users/delete', authMiddleware, async (req, res) => {
   try {
