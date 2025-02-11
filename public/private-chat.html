@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Chat</title>
+    <script defer src="private-chat.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-user">
+          <h2 id="username"></h2>
+          <p id="user-status">Online</p>
+        </div>
+        <ul class="navbar-links">
+          <li><a style="color: white" href="/chat.html">Global Chat</a></li>
+          <li><a style="color: white" href="/private-chat.html">Private Chat</a></li>
+          <li><a style="color: white" href="/settings.html">Settings</a></li>
+          <li><a style="color: white" href="/">Quit</a></li>
+        </ul>
+      </div>
+
+    <div style="margin-top: 20px;" class="container_privatchat">
+        <!-- Боковая панель с контактами -->
+        <aside class="sidebar_privatchat">
+            <h2>Contacts</h2>
+            <button id="add-contact">Add Contact</button>
+            <ul id="contact-list"></ul>
+        </aside>
+
+        <!-- Чат с выбранным контактом -->
+        <main class="chat-container_privatchat">
+            <div id="chat-header_privatchat">Select contact</div>
+            <div id="chat-messages_privatchat" class="messages-container"></div>
+            <div class="chat-input">
+            <input type="text" id="message-input_privatchat" placeholder="Enter message..." />
+            <button id="send-message_privatchat">Send</button>
+    </div>
+        </main>
+    </div>
+</body>
+</html>

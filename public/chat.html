@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Room</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-user">
+      <h2 id="username"></h2>
+      <p id="user-status">Online</p>
+    </div>
+    <ul class="navbar-links">
+      <li><a style="color: white" href="/chat.html">Global Chat</a></li>
+      <li><a style="color: white" href="/private-chat.html">Private Chat</a></li>
+      <li><a style="color: white" href="/settings.html">Settings</a></li>
+      <li><a style="color: white" href="/">Quit</a></li>
+    </ul>
+  </div>
+
+  <div class="chat-container">
+    <div id="messagesContainer"></div>
+    <input style=" width: 660px;"type="text" id="messageInput" placeholder="Enter message...">
+    <button id="sendMessageBtn">Send</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

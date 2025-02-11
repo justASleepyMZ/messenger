@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Messenger - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div style="height: 90%;" class="container">
+    <h1>Welcome to My Messenger</h1>
+    
+    <h2>Verification</h2>
+    <input id="regEmail" type="email" placeholder="Email" />
+    <button style="margin-bottom: 10px;" id="sendCodeBtn">Send Verification Code</button>
+    <input id="verificationCode" type="text" placeholder="Enter Code" disabled />
+
+    <h2>Registration</h2>
+    <input id="regUsername" type="text" placeholder="Username" disabled />
+    <input id="regPassword" type="password" placeholder="Password" disabled />
+    <button id="registerBtn" disabled>Register</button>
+
+    <h2>Login</h2>
+    <input id="loginUsername" type="text" placeholder="Username" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+    <button id="loginBtn">Login</button>
+  </div>
+  <script src="app.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+</body>
+</html>
