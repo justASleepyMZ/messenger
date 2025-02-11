@@ -251,6 +251,7 @@ if (token) {
 
 let messagesLoaded = false;
 
+socket.off("loadMessages", () => {});
 socket.on('loadMessages', (messages) => {
   if (!messagesLoaded) {
     const messagesContainer = document.getElementById('messagesContainer');
