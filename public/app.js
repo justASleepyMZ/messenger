@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Подключаемся к серверу через WebSocket
-const socket = io('http://localhost:5000');
+const socket = io('https://messenger-kkc5.onrender.com');
 
 // Получаем информацию о пользователе (например, из JWT токена)
 const token = localStorage.getItem("token");
