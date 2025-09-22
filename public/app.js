@@ -1,4 +1,6 @@
-document.getElementById("sendCodeBtn")?.addEventListener("click", async () => {
+// ==== Регистрация и 2FA ====
+document.getElementById("sendCodeBtn")?.addEventListener("click", async (e) => {
+  e.preventDefault();
   const email = document.getElementById("regEmail").value.trim();
   if (!email) return alert("Enter a valid email!");
 
@@ -8,10 +10,8 @@ document.getElementById("sendCodeBtn")?.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Error sending code!");
-
     alert("Verification code sent!");
     document.getElementById("verificationCode").disabled = false;
   } catch (err) {
@@ -19,11 +19,10 @@ document.getElementById("sendCodeBtn")?.addEventListener("click", async () => {
   }
 });
 
-document.getElementById("verificationCode")?.addEventListener("input", async () => {
+document.getElementById("verificationCode")?.addEventListener("input", async (e) => {
   const email = document.getElementById("regEmail").value.trim();
   const code = document.getElementById("verificationCode").value.trim();
-
-  if (code.length !== 6) return; // Проверяем только 6-значный код
+  if (code.length !== 6) return;
 
   try {
     const response = await fetch("https://messenger-kkc5.onrender.com/verify-code", {
@@ -31,7 +30,6 @@ document.getElementById("verificationCode")?.addEventListener("input", async () 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code }),
     });
-
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Verification failed!");
 
@@ -44,7 +42,8 @@ document.getElementById("verificationCode")?.addEventListener("input", async () 
   }
 });
 
-document.getElementById("registerBtn")?.addEventListener("click", async () => {
+document.getElementById("registerBtn")?.addEventListener("click", async (e) => {
+  e.preventDefault();
   const username = document.getElementById("regUsername").value;
   const password = document.getElementById("regPassword").value;
   const email = document.getElementById("regEmail").value;
@@ -55,221 +54,166 @@ document.getElementById("registerBtn")?.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, username, password }),
     });
-
     if (!response.ok) {
       const data = await response.json();
       throw new Error(data.error || "Registration failed!");
     }
-
     alert("Registration successful!");
   } catch (err) {
     alert(err.message);
   }
 });
 
-
-// Логин
-document.getElementById("loginBtn")?.addEventListener("click", () => {
+// ==== Логин ====
+document.getElementById("loginBtn")?.addEventListener("click", async (e) => {
+  e.preventDefault();
   const username = document.getElementById("loginUsername").value;
   const password = document.getElementById("loginPassword").value;
 
-  fetch("https://messenger-kkc5.onrender.com/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  })
-    .then((response) => {
-      if (response.ok) {
-        alert("Login successful!");
-        response.json().then((data) => {
-          localStorage.setItem("token", data.token); // Сохраняем токен
-          window.location.href = "/chat.html";  // Перенаправляем на страницу чата
-        });
-      } else {
-        response.json().then((data) => alert(data.error || "Login failed!"));
-      }
-    })
-    .catch((err) => alert("Error: " + err));
+  try {
+    const response = await fetch("https://messenger-kkc5.onrender.com/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Login failed!");
+    localStorage.setItem("token", data.token);
+    alert("Login successful!");
+    window.location.href = "/chat.html";
+  } catch (err) {
+    alert(err.message);
+  }
 });
 
+// ==== Профиль: смена пароля и удаление аккаунта ====
 document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+
   const changePasswordBtn = document.getElementById("changePasswordBtn");
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 
   if (changePasswordBtn) {
-    changePasswordBtn.addEventListener("click", async () => {
+    changePasswordBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
       const oldPassword = document.getElementById("oldPassword").value;
       const newPassword = document.getElementById("newPassword").value;
-
-      if (!oldPassword || !newPassword) {
-        return alert("Введите старый и новый пароль.");
-      }
+      if (!oldPassword || !newPassword) return alert("Введите старый и новый пароль.");
 
       try {
         const response = await fetch("https://messenger-kkc5.onrender.com/api/users/change-password", {
           method: "POST",
-          headers: {
+          headers: { 
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({ oldPassword, newPassword }),
         });
-        
-        const data = await response.json(); // <- Ошибка здесь, если сервер вернул HTML        
-
-        if (!response.ok) {
-          throw new Error(data.error || "Ошибка смены пароля");
-        }
-
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Ошибка смены пароля");
         alert("Пароль успешно изменен!");
-      } catch (error) {
-        alert(error.message);
+      } catch (err) {
+        alert(err.message);
       }
     });
   }
 
   if (deleteAccountBtn) {
-    deleteAccountBtn.addEventListener("click", async () => {
-      const confirmDelete = confirm("Вы уверены, что хотите удалить аккаунт?");
-      if (!confirmDelete) return;
+    deleteAccountBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!confirm("Вы уверены, что хотите удалить аккаунт?")) return;
 
       try {
         const response = await fetch("https://messenger-kkc5.onrender.com/api/users/delete", {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Ошибка удаления аккаунта");
-        }
-
+        if (!response.ok) throw new Error(data.error || "Ошибка удаления аккаунта");
         alert("Аккаунт удален!");
         localStorage.removeItem("token");
         window.location.href = "/";
-      } catch (error) {
-        alert(error.message);
+      } catch (err) {
+        alert(err.message);
       }
     });
   }
 });
 
-// Подключаемся к серверу через WebSocket
+// ==== Чат и WebSocket ====
 const socket = io('https://messenger-kkc5.onrender.com/');
-
-// Получаем информацию о пользователе (например, из JWT токена)
-const token = localStorage.getItem("token");
 let username = '';
 
-if (token) {
+const tokenChat = localStorage.getItem("token");
+if (tokenChat) {
   try {
-    const decodedToken = jwt_decode(token);
-    username = decodedToken.username;  
+    const decoded = jwt_decode(tokenChat);
+    username = decoded.username;
     document.getElementById("username").textContent = username;
-  } catch (error) {
-    console.error("Error decoding token:", error);
+  } catch {
     localStorage.removeItem("token");
     window.location.href = "/";
   }
 } else {
-  window.location.href = "/"; // Перенаправление на страницу входа, если нет токена
+  window.location.href = "/";
 }
 
 let messagesLoaded = false;
+let lastMessage = null;
 
 socket.on('loadMessages', (messages) => {
   if (!messagesLoaded) {
-    const messagesContainer = document.getElementById('messagesContainer');
-    messages.forEach((msg) => {
-      displayMessage(msg);
-    });
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    messagesLoaded = true; // Сообщения загружены
+    messages.forEach(displayMessage);
+    const container = document.getElementById('messagesContainer');
+    container.scrollTop = container.scrollHeight;
+    messagesLoaded = true;
   }
 });
 
-// Функция для отправки сообщений без дублирования
-let lastMessage = null;
-
-document.getElementById("sendMessageBtn")?.addEventListener("click", () => {
+document.getElementById("sendMessageBtn")?.addEventListener("click", (e) => {
+  e.preventDefault();
   const messageInput = document.getElementById("messageInput");
-  const message = messageInput?.value?.trim(); // Убираем лишние пробелы
-  
-  if (!message || message === lastMessage) {
-    alert("Message is empty or already sent!"); // Уведомление о пустом или повторном сообщении
-    return;
-  }
+  const message = messageInput?.value?.trim();
+  if (!message || message === lastMessage) return alert("Message is empty or already sent!");
 
-  // Проверяем наличие сокета и имени пользователя
-  if (!socket || !username) {
-    alert("Socket or username is not defined!");
-    return;
-  }
-
-  // Отправляем сообщение на сервер
   socket.emit("chatMessage", { sender: username, message });
-
-  // Сразу отображаем отправленное сообщение на экране
-  const messageData = { sender: username, message, timestamp: new Date().toISOString() };
-  displayMessage(messageData);
+  displayMessage({ sender: username, message, timestamp: new Date().toISOString() });
   lastMessage = message;
-
-  // Очистка поля ввода
   messageInput.value = '';
 });
 
-// Обработка входящих сообщений от других пользователей
 socket.on('chatMessage', (data) => {
-  if (data.sender == username) {
-    return;
-  }
-  displayMessage(data);
+  if (data.sender !== username) displayMessage(data);
 });
 
-// Функция для отображения сообщения
 function displayMessage(data) {
-  const messagesContainer = document.getElementById('messagesContainer');
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('message');
+  const container = document.getElementById('messagesContainer');
+  const el = document.createElement('div');
+  el.classList.add('message');
 
-  const senderElement = document.createElement('div');
-  senderElement.classList.add('sender');
-  senderElement.textContent = data.sender || 'User'; // Отображаем имя отправителя
+  const senderEl = document.createElement('div');
+  senderEl.classList.add('sender');
+  senderEl.textContent = data.sender || 'User';
 
-  const messageText = document.createElement('div');
-  messageText.textContent = data.message;
+  const textEl = document.createElement('div');
+  textEl.textContent = data.message;
 
-  const timeElement = document.createElement('div');
-  timeElement.classList.add('time');
-  timeElement.textContent = formatDate(data.timestamp);
+  const timeEl = document.createElement('div');
+  timeEl.classList.add('time');
+  timeEl.textContent = formatDate(data.timestamp);
 
-  messageElement.appendChild(senderElement);
-  messageElement.appendChild(messageText);
-  messageElement.appendChild(timeElement);
-
-  messagesContainer.appendChild(messageElement);
-
-  // Прокручиваем контейнер сообщений вниз после отображения нового сообщения
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  el.append(senderEl, textEl, timeEl);
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
 }
 
-// Функция для форматирования времени сообщения
 function formatDate(date) {
   const now = new Date();
-  const messageDate = new Date(date);
-
-  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-  if (now.toDateString() === messageDate.toDateString()) {
-    return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  } else {
-    return messageDate.toLocaleString('en-US', options);
-  }
+  const d = new Date(date);
+  if (now.toDateString() === d.toDateString()) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-// При подключении получаем старые сообщения
 socket.on("connect", () => {
   console.log("✅ Connected to server");
   socket.emit("getOldMessages");
