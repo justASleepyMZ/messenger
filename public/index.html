@@ -12,22 +12,22 @@
     
     <h2>Verification</h2>
     <input id="regEmail" type="email" placeholder="Email" />
-    <button style="margin-bottom: 10px;" id="sendCodeBtn">Send Verification Code</button>
+    <button style="margin-bottom: 10px;" id="sendCodeBtn" type="button">Send Verification Code</button>
     <input id="verificationCode" type="text" placeholder="Enter Code" disabled />
 
     <h2>Registration</h2>
     <input id="regUsername" type="text" placeholder="Username" disabled />
     <input id="regPassword" type="password" placeholder="Password" disabled />
-    <button id="registerBtn" disabled>Register</button>
+    <button id="registerBtn" disabled type="button">Register</button>
 
     <h2>Login</h2>
     <input id="loginUsername" type="text" placeholder="Username" />
     <input id="loginPassword" type="password" placeholder="Password" />
-    <button id="loginBtn">Login</button>
+    <button id="loginBtn" type="button">Login</button>
   </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="./app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
-
 </body>
 </html>
