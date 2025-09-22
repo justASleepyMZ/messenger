@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Подключаемся к серверу через WebSocket
-const socket = io('https://messenger-kkc5.onrender.com');
+const socket = io('');
 
 // Получаем информацию о пользователе (например, из JWT токена)
 const token = localStorage.getItem("token");
@@ -354,4 +354,14 @@ function formatDate(date) {
 }
 
 // При подключении получаем старые сообщения
-socket.emit('getOldMessages'); server.js(`const express = require('express'`);
+socket.on("connect", () => {
+  console.log("✅ Connected to server");
+  socket.emit("getOldMessages");
+});
+
+// Получаем старые сообщения
+socket.on("loadMessages", (messages) => {
+  console.log("📜 Старые сообщения:", messages);
+});
+
+server.js(`const express = require('express'`);
