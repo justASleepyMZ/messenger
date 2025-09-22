@@ -78,8 +78,12 @@ document.getElementById("loginBtn")?.addEventListener("click", async (e) => {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Login failed!");
-    localStorage.setItem("token", data.token);
+
+    // Временно не сохраняем токен
+    // localStorage.setItem("token", data.token);
     alert("Login successful!");
+
+    // Для теста можно сразу показывать чат
     window.location.href = "/chat.html";
   } catch (err) {
     alert(err.message);
@@ -88,8 +92,6 @@ document.getElementById("loginBtn")?.addEventListener("click", async (e) => {
 
 // ==== Профиль: смена пароля и удаление аккаунта ====
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("token");
-
   const changePasswordBtn = document.getElementById("changePasswordBtn");
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 
@@ -103,10 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const response = await fetch("https://messenger-kkc5.onrender.com/api/users/change-password", {
           method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ oldPassword, newPassword }),
         });
         const data = await response.json();
@@ -126,13 +125,10 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const response = await fetch("https://messenger-kkc5.onrender.com/api/users/delete", {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Ошибка удаления аккаунта");
         alert("Аккаунт удален!");
-        localStorage.removeItem("token");
-        window.location.href = "/";
       } catch (err) {
         alert(err.message);
       }
@@ -142,21 +138,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ==== Чат и WebSocket ====
 const socket = io('https://messenger-kkc5.onrender.com/');
-let username = '';
 
-const tokenChat = localStorage.getItem("token");
-if (tokenChat) {
-  try {
-    const decoded = jwt_decode(tokenChat);
-    username = decoded.username;
-    document.getElementById("username").textContent = username;
-  } catch {
-    localStorage.removeItem("token");
-    window.location.href = "/";
-  }
-} else {
-  window.location.href = "/";
-}
+// Временно присваиваем username вручную
+let username = "TestUser";
+document.getElementById("username")?.textContent = username;
 
 let messagesLoaded = false;
 let lastMessage = null;
