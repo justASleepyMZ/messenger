@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        const response = await fetch("/api/users/change-password", {
+        const response = await fetch("https://messenger-kkc5.onrender.com/api/users/change-password", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!confirmDelete) return;
 
       try {
-        const response = await fetch("/api/users/delete", {
+        const response = await fetch("https://messenger-kkc5.onrender.com/api/users/delete", {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -157,79 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Смена пароля
-document.addEventListener("DOMContentLoaded", () => {
-  const changePasswordBtn = document.getElementById("changePasswordBtn");
-
-  if (changePasswordBtn) {
-    changePasswordBtn.addEventListener("click", async () => {
-      const oldPassword = document.getElementById("oldPassword").value;
-      const newPassword = document.getElementById("newPassword").value;
-
-      if (!oldPassword || !newPassword) {
-        return alert("Введите старый и новый пароль.");
-      }
-
-      try {
-        const response = await fetch("/api/users/change-password", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ oldPassword, newPassword }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Ошибка смены пароля");
-        }
-
-        alert("Пароль успешно изменен!");
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-  }
-});
-
-//Удаоение аккаунта
-document.addEventListener("DOMContentLoaded", () => {
-  const deleteAccountBtn = document.getElementById("deleteAccountBtn");
-
-  if (deleteAccountBtn) {
-    deleteAccountBtn.addEventListener("click", async () => {
-      const confirmDelete = confirm("Вы уверены, что хотите удалить аккаунт?");
-      if (!confirmDelete) return;
-
-      try {
-        const response = await fetch("/api/users/delete", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Ошибка удаления аккаунта");
-        }
-
-        alert("Аккаунт успешно удалён!");
-        localStorage.removeItem("token");
-        window.location.href = "/";
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-  }
-});
-
 // Подключаемся к серверу через WebSocket
-const socket = io('');
+const socket = io('https://messenger-kkc5.onrender.com/');
 
 // Получаем информацию о пользователе (например, из JWT токена)
 const token = localStorage.getItem("token");
@@ -262,19 +191,8 @@ socket.on('loadMessages', (messages) => {
   }
 });
 
-// Загружаем старые сообщения при подключении
-socket.on('loadMessages', (messages) => {
-  const messagesContainer = document.getElementById('messagesContainer');
-  messages.forEach((msg) => {
-    displayMessage(msg);
-  });
-
-  // Прокручиваем контейнер сообщений вниз после загрузки старых сообщений
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
-});
-
 // Функция для отправки сообщений без дублирования
-lastMessage = null; // Сбрасываем после отправки сообщения
+let lastMessage = null;
 
 document.getElementById("sendMessageBtn")?.addEventListener("click", () => {
   const messageInput = document.getElementById("messageInput");
@@ -297,8 +215,6 @@ document.getElementById("sendMessageBtn")?.addEventListener("click", () => {
   // Сразу отображаем отправленное сообщение на экране
   const messageData = { sender: username, message, timestamp: new Date().toISOString() };
   displayMessage(messageData);
-
-  // Сохраняем последнее отправленное сообщение для проверки дублирования
   lastMessage = message;
 
   // Очистка поля ввода
@@ -358,10 +274,3 @@ socket.on("connect", () => {
   console.log("✅ Connected to server");
   socket.emit("getOldMessages");
 });
-
-// Получаем старые сообщения
-socket.on("loadMessages", (messages) => {
-  console.log("📜 Старые сообщения:", messages);
-});
-
-server.js(`const express = require('express'`);
