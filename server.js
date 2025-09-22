@@ -19,7 +19,13 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
 
 
 // Middleware
@@ -196,11 +202,6 @@ app.post('/messages', protect, async (req, res) => {
     message,
     timestamp: new Date(),
   });
-
-  const authRoutes = require("./controllers/authController");
-  app.use("/auth", authRoutes);
-
-  
 
   // Сохраняем сообщение в базе данных
   await newMessage.save();
